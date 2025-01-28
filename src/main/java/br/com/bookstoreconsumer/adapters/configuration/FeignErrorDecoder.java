@@ -1,14 +1,11 @@
 package br.com.bookstoreconsumer.adapters.configuration;
 
-import br.com.bookstoreconsumer.core.domain.ClientApiFeignException;
+import br.com.bookstoreconsumer.core.exception.ClientApiFeignException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import feign.Response;
 import feign.codec.ErrorDecoder;
-import lombok.SneakyThrows;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StreamUtils;

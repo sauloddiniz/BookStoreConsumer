@@ -1,4 +1,4 @@
-package br.com.bookstoreconsumer.core.domain;
+package br.com.bookstoreconsumer.core.exception;
 
 import br.com.bookstoreconsumer.adapters.configuration.FeignError;
 

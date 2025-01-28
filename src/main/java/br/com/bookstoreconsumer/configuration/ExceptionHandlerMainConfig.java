@@ -1,6 +1,6 @@
 package br.com.bookstoreconsumer.configuration;
 
-import br.com.bookstoreconsumer.core.domain.ClientApiFeignException;
+import br.com.bookstoreconsumer.core.exception.ClientApiFeignException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

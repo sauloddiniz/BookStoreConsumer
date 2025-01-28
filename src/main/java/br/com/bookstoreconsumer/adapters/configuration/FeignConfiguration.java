@@ -1,5 +1,6 @@
 package br.com.bookstoreconsumer.adapters.configuration;
 
+import feign.Logger;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -11,5 +12,9 @@ public class FeignConfiguration {
         return new FeignErrorDecoder();
     }
 
+    @Bean
+    public Logger.Level feignLogger(){
+        return Logger.Level.FULL;
+    }
 
 }

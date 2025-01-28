@@ -13,28 +13,18 @@ public class SecurityAdapter implements SecurityPort {
     private static final String SECRET_KEY = "chave-de-seguranca";
 
     @Override
-    public Cookie generateJwtCookie(String email, String name) {
-        String jwtToken = JWT.create()
+    public  String generateJwt(String email) {
+        return JWT.create()
                 .withSubject(email)
-                .withClaim("name", name)
                 .withClaim("email", email)
                 .withIssuedAt(new Date())
                 .withExpiresAt(new Date(System.currentTimeMillis() + 3600 * 1000))
                 .sign(Algorithm.HMAC256(SECRET_KEY));
-
-        Cookie jwtCookie = new Cookie("JWT_TOKEN", jwtToken);
-        jwtCookie.setHttpOnly(true);
-        jwtCookie.setSecure(false);
-        jwtCookie.setPath("/");
-        jwtCookie.setMaxAge(60 * 60 * 24);
-
-        return jwtCookie;
     }
 
     @Override
-    public boolean validJwtCookie(Cookie cookie) {
+    public boolean validJwt(String token) {
         try {
-            String token = cookie.getValue();
             JWT.require(Algorithm.HMAC256(SECRET_KEY))
                     .build()
                     .verify(token);
