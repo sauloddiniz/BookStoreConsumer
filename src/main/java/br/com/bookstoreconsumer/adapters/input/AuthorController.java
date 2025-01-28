@@ -4,6 +4,7 @@ import br.com.bookstoreconsumer.adapters.input.dto.AuthorRequest;
 import br.com.bookstoreconsumer.application.AuthorUseCase;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -22,5 +23,10 @@ public class AuthorController {
     @GetMapping
     public ResponseEntity<List<AuthorRequest>> getAuthors() {
         return ResponseEntity.ok(authorsUseCase.getAuthors());
+    }
+
+    @GetMapping({"/{id}"})
+    public ResponseEntity<AuthorRequest> getAuthorById(@PathVariable Long id) {
+        return ResponseEntity.ok(authorsUseCase.getAuthorById(id));
     }
 }

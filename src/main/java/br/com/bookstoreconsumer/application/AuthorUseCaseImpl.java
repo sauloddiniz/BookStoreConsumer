@@ -18,6 +18,13 @@ public class AuthorUseCaseImpl implements AuthorUseCase {
 
     @Override
     public List<AuthorRequest> getAuthors() {
-        return authorsClientPort.getAuthors().stream().map(AuthorRequest::toRequest).toList();
+        List<Author> authors = authorsClientPort.getAuthors();
+        return authors.stream().map(AuthorRequest::toRequest).toList();
+    }
+
+    @Override
+    public AuthorRequest getAuthorById(Long id) {
+        Author author = authorsClientPort.getAuthorById(id);
+        return AuthorRequest.toRequest(author);
     }
 }

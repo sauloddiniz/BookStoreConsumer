@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface AuthorUseCase {
     List<AuthorRequest> getAuthors();
+    AuthorRequest getAuthorById(Long id);
 }

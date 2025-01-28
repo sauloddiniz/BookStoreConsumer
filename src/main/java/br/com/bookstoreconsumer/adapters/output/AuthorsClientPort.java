@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface AuthorsClientPort {
     List<Author> getAuthors();
+    Author getAuthorById(Long id);
 }
