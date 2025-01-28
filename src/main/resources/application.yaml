@@ -1,0 +1,28 @@
+server:
+  port: 8081
+
+spring:
+  application:
+  name: BookStoreConsumer
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            scope:
+              - openid
+              - profile
+              - email
+            client-id: "61911610387-02vbrps8tfp031j4850ihde8c9rqgdgh.apps.googleusercontent.com"
+            client-secret: "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"
+
+
+springdoc:
+  api-docs:
+    path: /api-docs.yaml
+    enabled: 'false'
+
+logging:
+  level:
+    org.springframework.security: DEBUG
+    org.springframework.security.oauth2: DEBUG

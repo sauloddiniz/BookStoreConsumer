@@ -1,0 +1,299 @@
+openapi: 3.0.3
+info:
+  title: Favoritos de Clientes API
+  description: |-
+    Esta API foi desenvolvida com foco em atender as necessidades da Magalu para gerenciar os produtos favoritos de seus clientes. 
+    Esta aplicação permite criar, listar, atualizar e remover clientes, além de gerenciar a lista de produtos favoritos dos mesmos.
+    Há regras de negócio que garantem a validação das operações, como evitar duplicidades de e-mails e listas de favoritos únicas por cliente.
+  contact:
+    email: sauloddiniz@gmail.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+tags:
+  - name: client
+    description: Endpoints para gerenciar clientes
+  - name: favorite
+    description: Endpoints para gerenciar produtos favoritos dos clientes
+paths:
+  /client:
+    post:
+      tags:
+        - client
+      operationId: createClient
+      summary: Cria um novo cliente
+      description: Este endpoint cria um novo cliente. Não é permitido cadastrar dois clientes com o mesmo e-mail.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClientRequestDTO'
+      responses:
+        201:
+          description: Cliente criado com sucesso
+          headers:
+            Location:
+              description: URL de localização do cliente
+              schema:
+                type: string
+        400:
+          description: Dados inválidos
+        409:
+          description: Conflito
+        500:
+          description: Erro interno no servidor
+    get:
+      tags:
+        - client
+      operationId: getClients
+      summary: Lista todos os clientes
+      description: Este endpoint retorna a lista de todos os clientes cadastrados no sistema. É possível, opcionalmente, informar se os produtos favoritos dos clientes devem ser retornados.
+      parameters:
+        - name: favorites
+          in: query
+          description: Indica se os produtos favoritos devem ser retornados (`true` ou `false`).
+          required: false
+          schema:
+            type: boolean
+            example: true
+      responses:
+        200:
+          description: Lista de clientes retornada com sucesso
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ClientAndListFavoritesResponseDTO'
+        500:
+          description: Erro interno no servidor
+  /client/{clientId}:
+    get:
+      tags:
+        - client
+      operationId: getClientById
+      summary: Retorna um cliente pelo ID
+      description: Este endpoint obtém os detalhes de um cliente específico através do seu ID.
+      parameters:
+        - in: path
+          name: clientId
+          description: Identificador único do cliente
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Cliente retornado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientResponseDTO'
+        404:
+          description: Cliente não encontrado
+        500:
+          description: Erro interno no servidor
+    put:
+      tags:
+        - client
+      operationId: updateClient
+      summary: Atualiza os dados de um cliente
+      description: Este endpoint atualiza as informações de um cliente existente, como nome e e-mail.
+      parameters:
+        - in: path
+          name: clientId
+          description: Identificador único do cliente
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClientRequestDTO'
+      responses:
+        200:
+          description: Cliente atualizado com sucesso
+        400:
+          description: Solicitação inválida
+        404:
+          description: Cliente não encontrado
+        409:
+          description: Conflito
+        500:
+          description: Erro interno no servidor
+    delete:
+      tags:
+        - client
+      operationId: deleteClient
+      summary: Remove um cliente
+      description: Este endpoint remove um cliente do sistema.
+      parameters:
+        - in: path
+          name: clientId
+          description: Identificador único do cliente
+          required: true
+          schema:
+            type: integer
+      responses:
+        204:
+          description: Cliente removido com sucesso
+        404:
+          description: Cliente não encontrado
+        500:
+          description: Erro interno no servidor
+  /client/{clientId}/favorites:
+    get:
+      tags:
+        - favorite
+      operationId: getClientFavorites
+      summary: Retorna a lista de produtos favoritos de um cliente
+      description: Este endpoint retorna todos os produtos favoritos adicionados por um cliente.
+      parameters:
+        - in: path
+          name: clientId
+          description: Identificador único do cliente
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Lista de favoritos retornada com sucesso
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ClientAndListFavoritesResponseDTO'
+        404:
+          description: Cliente não encontrado
+        500:
+          description: Erro interno no servidor
+  /client/{clientId}/favorites/product/{productId}:
+    post:
+      tags:
+        - favorite
+      operationId: addFavoriteProduct
+      summary: Adiciona um produto à lista de favoritos de um cliente
+      description: Este endpoint adiciona um produto à lista de favoritos de um cliente. O produto deve existir na API de produtos externos.
+      parameters:
+        - in: path
+          name: clientId
+          description: Identificador único do cliente
+          required: true
+          schema:
+            type: integer
+        - in: path
+          name: productId
+          description: Identificador único do produto
+          required: true
+          schema:
+            type: integer
+      responses:
+        201:
+          description: Produto adicionado com sucesso
+        409:
+          description: Produto já presente na lista de favoritos
+        404:
+          description: Cliente ou produto não encontrado
+        500:
+          description: Erro interno no servidor
+    delete:
+      tags:
+        - favorite
+      operationId: removeFavoriteProduct
+      summary: Remove um produto da lista de favoritos de um cliente
+      description: Este endpoint remove um produto da lista de favoritos de um cliente.
+      parameters:
+        - in: path
+          name: clientId
+          description: Identificador único do cliente
+          required: true
+          schema:
+            type: integer
+        - in: path
+          name: productId
+          description: Identificador único do produto
+          required: true
+          schema:
+            type: integer
+      responses:
+        204:
+          description: Produto removido com sucesso
+        404:
+          description: Cliente ou produto não encontrado
+        500:
+          description: Erro interno no servidor
+
+components:
+  schemas:
+    ClientAndListFavoritesResponseDTO:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Nome do cliente
+          example: "Bruce Wayne"
+        email:
+          type: string
+          description: E-mail do cliente
+          example: "batman@morcegao.com"
+        favoritesProducts:
+          type: array
+          description: Lista de produtos favoritos do cliente (vazia se `favorites=false`)
+          items:
+            $ref: '#/components/schemas/ProductResponseDTO'
+    ClientRequestDTO:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+      required:
+        - name
+        - email
+    ClientResponseDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+    ProductResponseDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+          example: Smartphone X
+        image:
+          type: string
+        price:
+          type: number
+          format: double
+        review:
+          type: string
+          example: 4.5
+    ErrorResponse:
+      type: object
+      properties:
+        date:
+          type: string
+          example: Mon May 13 10:59:34 UTC 2000
+        path:
+          type: string
+          example: /client
+        message:
+          type: string
+          example: Mensagem de erro
+        method:
+          type: string
+          example: POST
