@@ -23,7 +23,7 @@ public class SecurityAdapter implements SecurityPort {
     }
 
     @Override
-    public boolean validJwt(String token) {
+    public boolean validJwtCookie(String token) {
         try {
             JWT.require(Algorithm.HMAC256(SECRET_KEY))
                     .build()

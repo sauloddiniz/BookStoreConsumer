@@ -22,6 +22,7 @@ public class AuthorController {
 
     @GetMapping
     public ResponseEntity<List<AuthorRequest>> getAuthors() {
+
         return ResponseEntity.ok(authorsUseCase.getAuthors());
     }
 
