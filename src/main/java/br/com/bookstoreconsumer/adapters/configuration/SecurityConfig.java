@@ -1,7 +1,6 @@
-package br.com.bookstoreconsumer.configuration;
+package br.com.bookstoreconsumer.adapters.configuration;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
+import br.com.bookstoreconsumer.adapters.filters.JwtValidationFilter;
 import jakarta.servlet.http.Cookie;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,11 +9,18 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.security.web.SecurityFilterChain;
-import java.util.Date;
-
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 public class SecurityConfig {
+
+    private final JwtValidationFilter jwtValidationFilter;
+    private final SecurityPort securityPort;
+
+    public SecurityConfig(JwtValidationFilter jwtValidationFilter, SecurityPort securityPort) {
+        this.jwtValidationFilter = jwtValidationFilter;
+        this.securityPort = securityPort;
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -33,6 +39,7 @@ public class SecurityConfig {
                             authorize.anyRequest().authenticated();
                         }
                 )
+                .addFilterBefore(jwtValidationFilter, UsernamePasswordAuthenticationFilter.class)
                 .oauth2Login(
                         oAuth2Configurer ->
                                 oAuth2Configurer
@@ -40,16 +47,8 @@ public class SecurityConfig {
                                             OidcUser principal = (OidcUser) authentication.getPrincipal();
                                             String email = principal.getEmail();
                                             String name = principal.getGivenName();
-                                            String secretKey = "secreta-chave-de-seguranca";
-                                            String jwtToken = JWT.create()
-                                                    .withSubject(email)
-                                                    .withClaim("name", name)
-                                                    .withClaim("email", email)
-                                                    .withIssuedAt(new Date())
-                                                    .withExpiresAt(new Date(System.currentTimeMillis() + 3600 * 1000))
-                                                    .sign(Algorithm.HMAC256(secretKey));
-                                            response.addHeader("Authorization", "Bearer " + jwtToken);
-                                            response.addCookie(new Cookie("jwtToken", jwtToken));
+                                            Cookie jwtCookie = securityPort.generateJwtCookie(email, name);
+                                            response.addCookie(jwtCookie);
                                             response.sendRedirect("/swagger-ui/index.html");
                                         })
                 );

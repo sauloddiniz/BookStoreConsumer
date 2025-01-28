@@ -1,6 +1,10 @@
 server:
   port: 8081
 
+api:
+  bookstore:
+    url: "http://localhost:8080"
+
 spring:
   application:
   name: BookStoreConsumer
@@ -27,6 +31,9 @@ springdoc:
 
 logging:
   level:
+    br.com.bookstoreconsumer.adapters.clients: DEBUG
     org.springframework.security: DEBUG
     org.springframework.security.oauth2: DEBUG
-    root: debug
+    root: info
+
+

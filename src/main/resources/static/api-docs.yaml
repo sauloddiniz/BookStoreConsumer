@@ -1,202 +1,19 @@
 openapi: 3.0.3
 info:
-  title: Projeto de Avaliação - API de Livros e Autores
+  title: API de Livros e Autores
   description: |-
-    Esta API foi desenvolvida como parte de uma avaliação de desenvolvedor backend.
-    O objetivo é permitir a criação, listagem, atualização e remoção de livros e autores, bem como o consumo dos dados em APIs externas.
-    A segurança é garantida via JWT, e as APIs são documentadas usando Swagger.
+    Esta API foi desenvolvida para permitir a criação, listagem, atualização e remoção de livros e autores.
+    Também é usada autenticação via Google para proteger endpoints, com tokens JWT armazenados em cookies.
   contact:
     email: sauloddiniz@gmail.com
-  license:
-    name: Apache 2.0
-    url: http://www.apache.org/licenses/LICENSE-2.0.html
   version: 1.0.0
+
 servers:
   - url: http://localhost:8081
-tags:
-  - name: author
-    description: Endpoints para gerenciar autores
-  - name: book
-    description: Endpoints para gerenciar livros
-paths:
-  /authors:
-    post:
-      tags:
-        - author
-      operationId: createAuthor
-      summary: Cria um novo autor
-      description: Este endpoint cria um novo autor no banco de dados.
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/AuthorRequest'
-      responses:
-        201:
-          description: Autor criado com sucesso
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AuthorResponse'
-        400:
-          description: Dados inválidos
-        500:
-          description: Erro interno no servidor
-    get:
-      tags:
-        - author
-      operationId: getAuthors
-      summary: Lista todos os autores
-      description: Retorna a lista de todos os autores cadastrados.
-      responses:
-        200:
-          description: Lista de autores retornada com sucesso
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/AuthorResponse'
-        500:
-          description: Erro interno no servidor
-  /authors/{id}:
-    get:
-      tags:
-        - author
-      operationId: getAuthorById
-      summary: Retorna um autor pelo ID
-      description: Este endpoint retorna os detalhes de um autor específico, incluindo os livros associados.
-      parameters:
-        - name: id
-          in: path
-          required: true
-          description: ID único do autor
-          schema:
-            type: integer
-      responses:
-        200:
-          description: Autor retornado com sucesso
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AuthorWithBooksResponse'
-        404:
-          description: Autor não encontrado
-        500:
-          description: Erro interno no servidor
-    put:
-      tags:
-        - author
-      operationId: updateAuthor
-      summary: Atualiza os dados de um autor
-      description: Este endpoint permite atualizar as informações de um autor existente.
-      parameters:
-        - name: id
-          in: path
-          required: true
-          description: ID único do autor
-          schema:
-            type: integer
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/AuthorRequest'
-      responses:
-        200:
-          description: Autor atualizado com sucesso
-        400:
-          description: Dados inválidos
-        404:
-          description: Autor não encontrado
-        500:
-          description: Erro interno no servidor
-    delete:
-      tags:
-        - author
-      operationId: deleteAuthor
-      summary: Remove um autor pelo ID
-      description: Este endpoint remove o autor especificado e todos os seus livros relacionados.
-      parameters:
-        - name: id
-          in: path
-          required: true
-          description: ID único do autor
-          schema:
-            type: integer
-      responses:
-        204:
-          description: Autor removido com sucesso
-        404:
-          description: Autor não encontrado
-        500:
-          description: Erro interno no servidor
-  /books:
-    post:
-      tags:
-        - book
-      operationId: createBook
-      summary: Cria um novo livro
-      description: Este endpoint cria um novo livro no banco de dados.
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/BookRequest'
-      responses:
-        201:
-          description: Livro criado com sucesso
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BookResponse'
-        400:
-          description: Dados inválidos
-        500:
-          description: Erro interno no servidor
-    get:
-      tags:
-        - book
-      operationId: getBooks
-      summary: Lista todos os livros
-      description: Retorna a lista de todos os livros cadastrados.
-      responses:
-        200:
-          description: Lista de livros retornada com sucesso
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/BookResponse'
-        500:
-          description: Erro interno no servidor
-  /books/{id}:
-    get:
-      tags:
-        - book
-      operationId: getBookById
-      summary: Retorna um livro pelo ID
-      description: Este endpoint retorna os detalhes de um livro específico, incluindo o autor associado.
-      parameters:
-        - name: id
-          in: path
-          required: true
-          description: ID único do livro
-          schema:
-            type: integer
-      responses:
-        200:
-          description: Livro retornado com sucesso
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BookWithAuthorResponse'
-        404:
-          description: Livro não encontrado
-        500:
-          description: Erro interno no servidor
+    description: Servidor local para desenvolvimento
+
 components:
+
   schemas:
     AuthorRequest:
       type: object
@@ -207,6 +24,7 @@ components:
           example: "J.R.R. Tolkien"
       required:
         - name
+
     AuthorResponse:
       type: object
       properties:
@@ -214,6 +32,7 @@ components:
           type: integer
         name:
           type: string
+
     AuthorWithBooksResponse:
       type: object
       properties:
@@ -225,6 +44,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/BookResponse'
+
     BookRequest:
       type: object
       properties:
@@ -248,6 +68,7 @@ components:
         - description
         - category
         - authorId
+
     BookResponse:
       type: object
       properties:
@@ -259,6 +80,7 @@ components:
           type: string
         category:
           type: string
+
     BookWithAuthorResponse:
       type: object
       properties:
@@ -272,3 +94,140 @@ components:
           type: string
         author:
           $ref: '#/components/schemas/AuthorResponse'
+
+paths:
+  /authors:
+    post:
+      tags:
+        - Autores
+      summary: Cria um novo autor
+      description: Cria um autor no banco de dados.
+      requestBody:
+        description: Dados do autor a ser criado
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthorRequest'
+      responses:
+        201:
+          description: Autor criado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthorResponse'
+        400:
+          description: Dados inválidos enviados
+        401:
+          description: Token JWT ausente ou inválido
+        500:
+          description: Erro interno no servidor
+
+    get:
+      tags:
+        - Autores
+      summary: Lista todos os autores
+      description: Lista todos os autores armazenados no banco de dados.
+      responses:
+        200:
+          description: Lista de autores retornada com sucesso
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AuthorResponse'
+        500:
+          description: Erro interno no servidor
+
+  /authors/{id}:
+    get:
+      tags:
+        - Autores
+      summary: Retorna um autor pelo ID
+      description: Detalhes de um autor específico, incluindo os livros associados.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID único do autor
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Informações do autor retornadas com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthorWithBooksResponse'
+        404:
+          description: Autor não encontrado
+        500:
+          description: Erro interno no servidor
+
+  /books:
+    post:
+      tags:
+        - Livros
+      summary: Cria um novo livro
+      description: Cria um novo livro no banco de dados.
+      requestBody:
+        description: Dados do livro a ser criado
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BookRequest'
+      responses:
+        201:
+          description: Livro criado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookResponse'
+        400:
+          description: Dados inválidos enviados
+        401:
+          description: Token JWT ausente ou inválido
+        500:
+          description: Erro interno no servidor
+
+    get:
+      tags:
+        - Livros
+      summary: Lista todos os livros
+      description: Lista todos os livros cadastrados no banco de dados.
+      responses:
+        200:
+          description: Lista de livros retornada com sucesso
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BookResponse'
+        500:
+          description: Erro interno no servidor
+
+  /books/{id}:
+    get:
+      tags:
+        - Livros
+      summary: Retorna um livro pelo ID
+      description: Detalhes de um livro específico, incluindo o autor associado.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID único do livro
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Informações do livro retornadas com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookWithAuthorResponse'
+        404:
+          description: Livro não encontrado
+        500:
+          description: Erro interno no servidor
