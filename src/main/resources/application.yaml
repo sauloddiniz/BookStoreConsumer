@@ -15,14 +15,18 @@ spring:
               - email
             client-id: "61911610387-02vbrps8tfp031j4850ihde8c9rqgdgh.apps.googleusercontent.com"
             client-secret: "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"
-
+            redirect-uri: "http://localhost:8081/login/oauth2/code/google"
 
 springdoc:
   api-docs:
-    path: /api-docs.yaml
-    enabled: 'false'
+    enabled: false
+    path: "/v3/api-docs"
+  swagger-ui:
+    url: "/api-docs.yaml"
+
 
 logging:
   level:
     org.springframework.security: DEBUG
     org.springframework.security.oauth2: DEBUG
+    root: debug

@@ -1,10 +1,10 @@
 openapi: 3.0.3
 info:
-  title: Favoritos de Clientes API
+  title: Projeto de Avaliação - API de Livros e Autores
   description: |-
-    Esta API foi desenvolvida com foco em atender as necessidades da Magalu para gerenciar os produtos favoritos de seus clientes. 
-    Esta aplicação permite criar, listar, atualizar e remover clientes, além de gerenciar a lista de produtos favoritos dos mesmos.
-    Há regras de negócio que garantem a validação das operações, como evitar duplicidades de e-mails e listas de favoritos únicas por cliente.
+    Esta API foi desenvolvida como parte de uma avaliação de desenvolvedor backend.
+    O objetivo é permitir a criação, listagem, atualização e remoção de livros e autores, bem como o consumo dos dados em APIs externas.
+    A segurança é garantida via JWT, e as APIs são documentadas usando Swagger.
   contact:
     email: sauloddiniz@gmail.com
   license:
@@ -12,288 +12,263 @@ info:
     url: http://www.apache.org/licenses/LICENSE-2.0.html
   version: 1.0.0
 servers:
-  - url: http://localhost:8080
+  - url: http://localhost:8081
 tags:
-  - name: client
-    description: Endpoints para gerenciar clientes
-  - name: favorite
-    description: Endpoints para gerenciar produtos favoritos dos clientes
+  - name: author
+    description: Endpoints para gerenciar autores
+  - name: book
+    description: Endpoints para gerenciar livros
 paths:
-  /client:
+  /authors:
     post:
       tags:
-        - client
-      operationId: createClient
-      summary: Cria um novo cliente
-      description: Este endpoint cria um novo cliente. Não é permitido cadastrar dois clientes com o mesmo e-mail.
+        - author
+      operationId: createAuthor
+      summary: Cria um novo autor
+      description: Este endpoint cria um novo autor no banco de dados.
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ClientRequestDTO'
+              $ref: '#/components/schemas/AuthorRequest'
       responses:
         201:
-          description: Cliente criado com sucesso
-          headers:
-            Location:
-              description: URL de localização do cliente
+          description: Autor criado com sucesso
+          content:
+            application/json:
               schema:
-                type: string
+                $ref: '#/components/schemas/AuthorResponse'
         400:
           description: Dados inválidos
-        409:
-          description: Conflito
         500:
           description: Erro interno no servidor
     get:
       tags:
-        - client
-      operationId: getClients
-      summary: Lista todos os clientes
-      description: Este endpoint retorna a lista de todos os clientes cadastrados no sistema. É possível, opcionalmente, informar se os produtos favoritos dos clientes devem ser retornados.
-      parameters:
-        - name: favorites
-          in: query
-          description: Indica se os produtos favoritos devem ser retornados (`true` ou `false`).
-          required: false
-          schema:
-            type: boolean
-            example: true
+        - author
+      operationId: getAuthors
+      summary: Lista todos os autores
+      description: Retorna a lista de todos os autores cadastrados.
       responses:
         200:
-          description: Lista de clientes retornada com sucesso
+          description: Lista de autores retornada com sucesso
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/ClientAndListFavoritesResponseDTO'
+                  $ref: '#/components/schemas/AuthorResponse'
         500:
           description: Erro interno no servidor
-  /client/{clientId}:
+  /authors/{id}:
     get:
       tags:
-        - client
-      operationId: getClientById
-      summary: Retorna um cliente pelo ID
-      description: Este endpoint obtém os detalhes de um cliente específico através do seu ID.
+        - author
+      operationId: getAuthorById
+      summary: Retorna um autor pelo ID
+      description: Este endpoint retorna os detalhes de um autor específico, incluindo os livros associados.
       parameters:
-        - in: path
-          name: clientId
-          description: Identificador único do cliente
+        - name: id
+          in: path
           required: true
+          description: ID único do autor
           schema:
             type: integer
       responses:
         200:
-          description: Cliente retornado com sucesso
+          description: Autor retornado com sucesso
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ClientResponseDTO'
+                $ref: '#/components/schemas/AuthorWithBooksResponse'
         404:
-          description: Cliente não encontrado
+          description: Autor não encontrado
         500:
           description: Erro interno no servidor
     put:
       tags:
-        - client
-      operationId: updateClient
-      summary: Atualiza os dados de um cliente
-      description: Este endpoint atualiza as informações de um cliente existente, como nome e e-mail.
+        - author
+      operationId: updateAuthor
+      summary: Atualiza os dados de um autor
+      description: Este endpoint permite atualizar as informações de um autor existente.
       parameters:
-        - in: path
-          name: clientId
-          description: Identificador único do cliente
+        - name: id
+          in: path
           required: true
+          description: ID único do autor
           schema:
             type: integer
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ClientRequestDTO'
+              $ref: '#/components/schemas/AuthorRequest'
       responses:
         200:
-          description: Cliente atualizado com sucesso
+          description: Autor atualizado com sucesso
         400:
-          description: Solicitação inválida
+          description: Dados inválidos
         404:
-          description: Cliente não encontrado
-        409:
-          description: Conflito
+          description: Autor não encontrado
         500:
           description: Erro interno no servidor
     delete:
       tags:
-        - client
-      operationId: deleteClient
-      summary: Remove um cliente
-      description: Este endpoint remove um cliente do sistema.
+        - author
+      operationId: deleteAuthor
+      summary: Remove um autor pelo ID
+      description: Este endpoint remove o autor especificado e todos os seus livros relacionados.
       parameters:
-        - in: path
-          name: clientId
-          description: Identificador único do cliente
+        - name: id
+          in: path
           required: true
+          description: ID único do autor
           schema:
             type: integer
       responses:
         204:
-          description: Cliente removido com sucesso
+          description: Autor removido com sucesso
         404:
-          description: Cliente não encontrado
+          description: Autor não encontrado
         500:
           description: Erro interno no servidor
-  /client/{clientId}/favorites:
+  /books:
+    post:
+      tags:
+        - book
+      operationId: createBook
+      summary: Cria um novo livro
+      description: Este endpoint cria um novo livro no banco de dados.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BookRequest'
+      responses:
+        201:
+          description: Livro criado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookResponse'
+        400:
+          description: Dados inválidos
+        500:
+          description: Erro interno no servidor
     get:
       tags:
-        - favorite
-      operationId: getClientFavorites
-      summary: Retorna a lista de produtos favoritos de um cliente
-      description: Este endpoint retorna todos os produtos favoritos adicionados por um cliente.
-      parameters:
-        - in: path
-          name: clientId
-          description: Identificador único do cliente
-          required: true
-          schema:
-            type: integer
+        - book
+      operationId: getBooks
+      summary: Lista todos os livros
+      description: Retorna a lista de todos os livros cadastrados.
       responses:
         200:
-          description: Lista de favoritos retornada com sucesso
+          description: Lista de livros retornada com sucesso
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/ClientAndListFavoritesResponseDTO'
-        404:
-          description: Cliente não encontrado
+                  $ref: '#/components/schemas/BookResponse'
         500:
           description: Erro interno no servidor
-  /client/{clientId}/favorites/product/{productId}:
-    post:
+  /books/{id}:
+    get:
       tags:
-        - favorite
-      operationId: addFavoriteProduct
-      summary: Adiciona um produto à lista de favoritos de um cliente
-      description: Este endpoint adiciona um produto à lista de favoritos de um cliente. O produto deve existir na API de produtos externos.
+        - book
+      operationId: getBookById
+      summary: Retorna um livro pelo ID
+      description: Este endpoint retorna os detalhes de um livro específico, incluindo o autor associado.
       parameters:
-        - in: path
-          name: clientId
-          description: Identificador único do cliente
+        - name: id
+          in: path
           required: true
-          schema:
-            type: integer
-        - in: path
-          name: productId
-          description: Identificador único do produto
-          required: true
+          description: ID único do livro
           schema:
             type: integer
       responses:
-        201:
-          description: Produto adicionado com sucesso
-        409:
-          description: Produto já presente na lista de favoritos
+        200:
+          description: Livro retornado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookWithAuthorResponse'
         404:
-          description: Cliente ou produto não encontrado
+          description: Livro não encontrado
         500:
           description: Erro interno no servidor
-    delete:
-      tags:
-        - favorite
-      operationId: removeFavoriteProduct
-      summary: Remove um produto da lista de favoritos de um cliente
-      description: Este endpoint remove um produto da lista de favoritos de um cliente.
-      parameters:
-        - in: path
-          name: clientId
-          description: Identificador único do cliente
-          required: true
-          schema:
-            type: integer
-        - in: path
-          name: productId
-          description: Identificador único do produto
-          required: true
-          schema:
-            type: integer
-      responses:
-        204:
-          description: Produto removido com sucesso
-        404:
-          description: Cliente ou produto não encontrado
-        500:
-          description: Erro interno no servidor
-
 components:
   schemas:
-    ClientAndListFavoritesResponseDTO:
+    AuthorRequest:
       type: object
       properties:
         name:
           type: string
-          description: Nome do cliente
-          example: "Bruce Wayne"
-        email:
-          type: string
-          description: E-mail do cliente
-          example: "batman@morcegao.com"
-        favoritesProducts:
-          type: array
-          description: Lista de produtos favoritos do cliente (vazia se `favorites=false`)
-          items:
-            $ref: '#/components/schemas/ProductResponseDTO'
-    ClientRequestDTO:
-      type: object
-      properties:
-        name:
-          type: string
-        email:
-          type: string
-          format: email
+          description: Nome do autor
+          example: "J.R.R. Tolkien"
       required:
         - name
-        - email
-    ClientResponseDTO:
+    AuthorResponse:
       type: object
       properties:
         id:
           type: integer
         name:
           type: string
-        email:
+    AuthorWithBooksResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
           type: string
-          format: email
-    ProductResponseDTO:
+        books:
+          type: array
+          items:
+            $ref: '#/components/schemas/BookResponse'
+    BookRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Título do livro
+          example: "O Hobbit"
+        description:
+          type: string
+          description: Descrição do livro
+          example: "Uma aventura épica de um hobbit chamado Bilbo Baggins"
+        category:
+          type: string
+          description: Categoria do livro
+          example: "Fantasia"
+        authorId:
+          type: integer
+          description: ID do autor associado ao livro
+      required:
+        - title
+        - description
+        - category
+        - authorId
+    BookResponse:
       type: object
       properties:
         id:
           type: integer
         title:
           type: string
-          example: Smartphone X
-        image:
+        description:
           type: string
-        price:
-          type: number
-          format: double
-        review:
+        category:
           type: string
-          example: 4.5
-    ErrorResponse:
+    BookWithAuthorResponse:
       type: object
       properties:
-        date:
+        id:
+          type: integer
+        title:
           type: string
-          example: Mon May 13 10:59:34 UTC 2000
-        path:
+        description:
           type: string
-          example: /client
-        message:
+        category:
           type: string
-          example: Mensagem de erro
-        method:
-          type: string
-          example: POST
+        author:
+          $ref: '#/components/schemas/AuthorResponse'
