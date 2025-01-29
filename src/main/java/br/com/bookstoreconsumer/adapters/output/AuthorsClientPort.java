@@ -7,4 +7,7 @@ import java.util.List;
 public interface AuthorsClientPort {
     List<Author> getAuthors();
     Author getAuthorById(Long id);
+    String saveAuthor(Author author);
+    Author updateAuthor(Long id, Author author);
+    void deleteAuthor(Long id);
 }

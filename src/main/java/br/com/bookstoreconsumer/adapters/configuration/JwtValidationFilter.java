@@ -18,10 +18,10 @@ import java.util.Collections;
 @Configuration
 public class JwtValidationFilter extends OncePerRequestFilter {
 
-    private final SecurityPort securityPort;
+    private final JwtSecurityPort jwtSecurityPort;
 
-    public JwtValidationFilter(SecurityPort securityPort) {
-        this.securityPort = securityPort;
+    public JwtValidationFilter(JwtSecurityPort securityPort) {
+        this.jwtSecurityPort = securityPort;
     }
 
     @Override
@@ -42,7 +42,7 @@ public class JwtValidationFilter extends OncePerRequestFilter {
         }
 
         String token = headerAuthorization.substring(7);
-        boolean isValid = securityPort.validJwtCookie(token);
+        boolean isValid = jwtSecurityPort.validJwtCookie(token);
         if (!isValid) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             filterChain.doFilter(request, response);

@@ -2,13 +2,12 @@ package br.com.bookstoreconsumer.adapters.configuration;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-import jakarta.servlet.http.Cookie;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
 
 @Component
-public class SecurityAdapter implements SecurityPort {
+public class JwtSecurityAdapter implements JwtSecurityPort {
 
     private static final String SECRET_KEY = "chave-de-seguranca";
 

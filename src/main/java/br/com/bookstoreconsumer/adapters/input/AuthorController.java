@@ -1,13 +1,13 @@
 package br.com.bookstoreconsumer.adapters.input;
 
+import br.com.bookstoreconsumer.adapters.clients.dto.AuthorResponse;
 import br.com.bookstoreconsumer.adapters.input.dto.AuthorRequest;
 import br.com.bookstoreconsumer.application.AuthorUseCase;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -21,13 +21,31 @@ public class AuthorController {
     }
 
     @GetMapping
-    public ResponseEntity<List<AuthorRequest>> getAuthors() {
-
+    public ResponseEntity<List<AuthorResponse>> getAuthors() {
         return ResponseEntity.ok(authorsUseCase.getAuthors());
     }
 
     @GetMapping({"/{id}"})
-    public ResponseEntity<AuthorRequest> getAuthorById(@PathVariable Long id) {
+    public ResponseEntity<AuthorResponse> getAuthorById(@PathVariable Long id) {
         return ResponseEntity.ok(authorsUseCase.getAuthorById(id));
+    }
+
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Void> saveAuthor(@RequestBody AuthorRequest authorRequest) {
+        String location = authorsUseCase.saveAuthor(authorRequest);
+        return ResponseEntity.created(URI.create(location)).build();
+    }
+
+    @PutMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<AuthorResponse> updateAuthor(@PathVariable Long id,
+                                                       @RequestBody AuthorRequest authorRequest) {
+        AuthorResponse authorResponse = authorsUseCase.updateAuthor(id, authorRequest);
+        return ResponseEntity.ok(authorResponse);
+    }
+
+    @DeleteMapping(path = "/{id}")
+    public ResponseEntity<Void> updateAuthor(@PathVariable Long id) {
+        authorsUseCase.deleteAuthor(id);
+        return ResponseEntity.noContent().build();
     }
 }

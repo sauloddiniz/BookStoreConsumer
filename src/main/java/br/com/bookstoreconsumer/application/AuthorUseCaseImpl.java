@@ -1,5 +1,6 @@
 package br.com.bookstoreconsumer.application;
 
+import br.com.bookstoreconsumer.adapters.clients.dto.AuthorResponse;
 import br.com.bookstoreconsumer.adapters.input.dto.AuthorRequest;
 import br.com.bookstoreconsumer.adapters.output.AuthorsClientPort;
 import br.com.bookstoreconsumer.core.domain.Author;
@@ -17,14 +18,32 @@ public class AuthorUseCaseImpl implements AuthorUseCase {
     }
 
     @Override
-    public List<AuthorRequest> getAuthors() {
+    public List<AuthorResponse> getAuthors() {
         List<Author> authors = authorsClientPort.getAuthors();
-        return authors.stream().map(AuthorRequest::toRequest).toList();
+        return authors.stream().map(AuthorResponse::toResponse).toList();
     }
 
     @Override
-    public AuthorRequest getAuthorById(Long id) {
+    public AuthorResponse getAuthorById(Long id) {
         Author author = authorsClientPort.getAuthorById(id);
-        return AuthorRequest.toRequest(author);
+        return AuthorResponse.toResponse(author);
+    }
+
+    @Override
+    public String saveAuthor(AuthorRequest authorRequest) {
+        Author author = new Author(authorRequest.name());
+        return authorsClientPort.saveAuthor(author);
+    }
+
+    @Override
+    public AuthorResponse updateAuthor(Long id, AuthorRequest author) {
+        Author authorToUpdate = new Author(id, author.name());
+        authorToUpdate = authorsClientPort.updateAuthor(id, authorToUpdate);
+        return AuthorResponse.toResponse(authorToUpdate);
+    }
+
+    @Override
+    public void deleteAuthor(Long id) {
+        authorsClientPort.deleteAuthor(id);
     }
 }
