@@ -1,14 +1,37 @@
 package br.com.bookstoreconsumer.adapters.clients.dto;
 
 import br.com.bookstoreconsumer.core.domain.Author;
+import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-public record AuthorResponse(Long id, String name) {
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Stream;
+
+public record AuthorResponse(Long id,
+                             @JsonAlias("name")
+                             @JsonProperty("nome")
+                             String name,
+                             @JsonAlias("bookResponse")
+                             @JsonProperty("livros")
+                             List<BookResponse> bookResponse) {
 
     public static Author toAuthor(AuthorResponse authorResponse) {
-        return new Author(authorResponse.id(), authorResponse.name());
+        return new Author(authorResponse.id(), authorResponse.name(),
+                Optional.ofNullable(authorResponse.bookResponse())
+                        .map(Collection::stream)
+                        .orElseGet(Stream::empty)
+                        .map(BookResponse::toBook)
+                        .toList());
     }
 
     public static AuthorResponse toResponse(Author author) {
-        return new AuthorResponse(author.getId(), author.getName());
+        return new AuthorResponse(author.getId(), author.getName(),
+                Optional.ofNullable(author.getBooks())
+                        .map(Collection::stream)
+                        .orElseGet(Stream::empty)
+                        .map(BookResponse::toResponse)
+                        .toList());
     }
 }
