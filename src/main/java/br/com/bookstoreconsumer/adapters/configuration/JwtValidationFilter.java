@@ -49,10 +49,9 @@ public class JwtValidationFilter extends OncePerRequestFilter {
         }
 
         String email = JWT.decode(token).getSubject();
-        String USER = "USER";
         UsernamePasswordAuthenticationToken authentication =
                 new UsernamePasswordAuthenticationToken(email, token,
-                        Collections.singletonList(new SimpleGrantedAuthority(USER)));
+                        Collections.singletonList(new SimpleGrantedAuthority("SIMPLE_USER")));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
