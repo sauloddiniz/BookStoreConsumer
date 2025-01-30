@@ -18,12 +18,14 @@ public class ExceptionHandlerMainConfig {
     public ResponseEntity<Object> clientApiFeignException(ClientApiFeignException ex, HttpServletRequest request) {
         Map<String, Object> body = extractErrorInfo(ex, request);
         Map<String, Object> externalError = new HashMap<>();
-        externalError.put("date", ClientApiFeignException.getFeignError().getDate());
-        externalError.put("error", ClientApiFeignException.getFeignError().getError());
-        externalError.put("path", ClientApiFeignException.getFeignError().getPath());
-        externalError.put("method", ClientApiFeignException.getFeignError().getMethod());
+        externalError.put("date", ex.getError().getDate());
+        externalError.put("error", ex.getError().getError());
+        externalError.put("path", ex.getError().getPath());
+        externalError.put("method", ex.getError().getMethod());
         body.put("externalError", externalError);
-        return new ResponseEntity<>(body, HttpStatus.valueOf(ClientApiFeignException.getFeignError().getHttpStatus()));
+        int status = ex.getError().getHttpStatus();
+        ex.clearErrorMessage();
+        return new ResponseEntity<>(body, HttpStatus.valueOf(status));
     }
 
     private static Map<String, Object> extractErrorInfo(Exception ex, HttpServletRequest request) {

@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Objects;
 
 @Component
 public class AuthorClientAdapter implements AuthorClientPort {
@@ -21,13 +22,13 @@ public class AuthorClientAdapter implements AuthorClientPort {
 
     @Override
     public List<Author> getAuthors(boolean books) {
-        List<AuthorAndBookResponse> authorRequests = authorsClientApi.getAuthors(books).getBody();
-        return authorRequests.stream().map(AuthorAndBookResponse::toAuthor).toList();
+        List<AuthorAndBookResponse> authorsRequest = authorsClientApi.getAuthors(books);
+        return authorsRequest.stream().map(AuthorAndBookResponse::toAuthor).toList();
     }
 
     @Override
     public Author getAuthorById(Long id) {
-        AuthorAndBookResponse authorResponse = authorsClientApi.getAuthorById(id).getBody();
+        AuthorAndBookResponse authorResponse = authorsClientApi.getAuthorById(id);
         return AuthorAndBookResponse.toAuthor(authorResponse);
     }
 
@@ -35,13 +36,13 @@ public class AuthorClientAdapter implements AuthorClientPort {
     public String saveAuthor(Author author) {
         AuthorRequest authorRequest = AuthorRequest.toRequest(author);
         ResponseEntity<Void> response = authorsClientApi.saveAuthor(authorRequest);
-        return response.getHeaders().getLocation().toString();
+        return Objects.requireNonNull(response.getHeaders().getLocation()).toString();
     }
 
     @Override
     public Author updateAuthor(Long id, Author author) {
         AuthorRequest authorRequest = AuthorRequest.toRequest(author);
-        AuthorAndBookResponse authorResponse = authorsClientApi.updateAuthor(id, authorRequest).getBody();
+        AuthorAndBookResponse authorResponse = authorsClientApi.updateAuthor(id, authorRequest);
         return AuthorAndBookResponse.toAuthor(authorResponse);
     }
 

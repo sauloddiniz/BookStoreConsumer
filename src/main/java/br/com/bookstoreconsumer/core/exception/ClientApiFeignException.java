@@ -2,16 +2,20 @@ package br.com.bookstoreconsumer.core.exception;
 
 import br.com.bookstoreconsumer.adapters.configuration.FeignError;
 
-
 public class ClientApiFeignException extends RuntimeException {
 
-    private static FeignError feignError;
+    private static final ThreadLocal<FeignError> error = new ThreadLocal<>();
 
     public ClientApiFeignException(FeignError error) {
-       feignError = error;
+        ClientApiFeignException.error.set(error);
     }
 
-    public static FeignError getFeignError() {
-        return feignError;
+    public FeignError getError() {
+        return error.get();
     }
+
+    public void clearErrorMessage() {
+        error.remove();
+    }
+
 }

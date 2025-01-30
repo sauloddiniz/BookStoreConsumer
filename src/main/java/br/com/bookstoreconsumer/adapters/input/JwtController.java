@@ -23,7 +23,7 @@ public class JwtController {
     }
 
     @GetMapping("/generate-token")
-    public ResponseEntity<?> generateJwt(OAuth2AuthenticationToken token) {
+    public ResponseEntity<Object> generateJwt(OAuth2AuthenticationToken token) {
 
         if (token == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)

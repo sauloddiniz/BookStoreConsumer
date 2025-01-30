@@ -8,6 +8,8 @@ import br.com.bookstoreconsumer.adapters.output.BookClientPort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
+import java.util.Objects;
+
 @Component
 public class BookClientAdapter implements BookClientPort {
 
@@ -30,7 +32,7 @@ public class BookClientAdapter implements BookClientPort {
     @Override
     public String saveBook(Long authorId, BookRequest book) {
         ResponseEntity<Void> response = bookClientApi.saveBook(authorId, book);
-        return response.getHeaders().getLocation().toString();
+        return Objects.requireNonNull(response.getHeaders().getLocation()).toString();
     }
 
     @Override

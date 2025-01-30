@@ -13,18 +13,18 @@ import java.util.List;
 public interface AuthorsClientApi {
 
     @GetMapping()
-    ResponseEntity<List<AuthorAndBookResponse>> getAuthors(@RequestParam(value = "books", required = false, defaultValue = "false") boolean books);
+    List<AuthorAndBookResponse> getAuthors(@RequestParam(value = "books", required = false, defaultValue = "false") boolean books);
 
     @GetMapping("/{id}")
-    ResponseEntity<AuthorAndBookResponse> getAuthorById(@PathVariable Long id);
+    AuthorAndBookResponse getAuthorById(@PathVariable Long id);
 
     @PostMapping()
     ResponseEntity<Void> saveAuthor(@RequestBody AuthorRequest authorRequest);
 
     @PutMapping("/{id}")
-    ResponseEntity<AuthorAndBookResponse> updateAuthor(@PathVariable Long id,
+    AuthorAndBookResponse updateAuthor(@PathVariable Long id,
                                                        @RequestBody AuthorRequest authorRequest);
 
     @DeleteMapping("/{id}")
-    ResponseEntity<Void> deleteAuthor(@PathVariable Long id);
+    Void deleteAuthor(@PathVariable Long id);
 }
