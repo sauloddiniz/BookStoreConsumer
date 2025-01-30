@@ -3,7 +3,6 @@ package br.com.bookstoreconsumer.application;
 import br.com.bookstoreconsumer.adapters.clients.dto.AuthorAndBookResponse;
 import br.com.bookstoreconsumer.adapters.input.dto.AuthorRequest;
 import br.com.bookstoreconsumer.adapters.output.AuthorClientPort;
-import br.com.bookstoreconsumer.core.domain.Author;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,28 +18,23 @@ public class AuthorUseCaseImpl implements AuthorUseCase {
 
     @Override
     public List<AuthorAndBookResponse> getAuthors(boolean books) {
-        List<Author> authors = authorsClientPort.getAuthors(books);
-        return authors.stream().map(AuthorAndBookResponse::toResponse).toList();
+        return authorsClientPort.getAuthors(books);
     }
 
     @Override
     public AuthorAndBookResponse getAuthorById(Long id) {
-        Author author = authorsClientPort.getAuthorById(id);
-        return AuthorAndBookResponse.toResponse(author);
+        return authorsClientPort.getAuthorById(id);
     }
 
     @Override
     public String saveAuthor(AuthorRequest authorRequest) {
-        Author author = new Author(authorRequest.name());
-        String location = authorsClientPort.saveAuthor(author);
+        String location = authorsClientPort.saveAuthor(authorRequest);
         return location.substring(location.lastIndexOf("/") + 1);
     }
 
     @Override
     public AuthorAndBookResponse updateAuthor(Long id, AuthorRequest author) {
-        Author authorToUpdate = new Author(id, author.name());
-        authorToUpdate = authorsClientPort.updateAuthor(id, authorToUpdate);
-        return AuthorAndBookResponse.toResponse(authorToUpdate);
+        return authorsClientPort.updateAuthor(id, author);
     }
 
     @Override

@@ -49,7 +49,7 @@ public class AuthorController {
     }
 
     @DeleteMapping(path = "/{id}")
-    public ResponseEntity<Void> updateAuthor(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteAuthor(@PathVariable Long id) {
         authorsUseCase.deleteAuthor(id);
         return ResponseEntity.noContent().build();
     }

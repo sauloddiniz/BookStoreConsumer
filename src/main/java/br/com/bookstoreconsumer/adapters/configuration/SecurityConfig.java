@@ -25,7 +25,7 @@ public class SecurityConfig {
                                     "/swagger-ui/**",
                                     "/v3/api-docs/**",
                                     "/api-docs.yaml",
-                                    "/bookstore-consumer-api/auth/generate-token"
+                                    "/auth/generate-token"
                             ).permitAll();
                             authorize.anyRequest().authenticated();
                         }

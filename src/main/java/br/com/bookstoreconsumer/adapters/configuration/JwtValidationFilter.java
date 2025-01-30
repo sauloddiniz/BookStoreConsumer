@@ -1,6 +1,5 @@
 package br.com.bookstoreconsumer.adapters.configuration;
 
-import com.auth0.jwt.JWT;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,18 +16,23 @@ import java.util.Collections;
 @Configuration
 public class JwtValidationFilter extends OncePerRequestFilter {
 
-    private final JwtSecurityPort jwtSecurityPort;
+    private final JwtUtil jwtUtil;
 
-    public JwtValidationFilter(JwtSecurityPort securityPort) {
-        this.jwtSecurityPort = securityPort;
+    public JwtValidationFilter(JwtUtil jwtUtil) {
+        this.jwtUtil = jwtUtil;
     }
+
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-        if (request.getServletPath().startsWith("/swagger-ui/") ||
-                request.getServletPath().startsWith("/v3/api-docs") ||
-                request.getServletPath().equals("/api-docs.yaml")) {
+        final String requestURI = request.getRequestURI();
+
+        if (requestURI.startsWith("/swagger-ui/")
+                || requestURI.startsWith("/v3/api-docs")
+                || requestURI.equals("/api-docs.yaml")
+                || requestURI.equals("/auth/generate-token")
+        ) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -41,14 +45,14 @@ public class JwtValidationFilter extends OncePerRequestFilter {
         }
 
         String token = headerAuthorization.substring(7);
-        boolean isValid = jwtSecurityPort.validJwt(token);
+        boolean isValid = jwtUtil.validJwt(token);
         if (!isValid) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             filterChain.doFilter(request, response);
             return;
         }
 
-        String email = JWT.decode(token).getSubject();
+        String email = jwtUtil.getEmail(token);
         UsernamePasswordAuthenticationToken authentication =
                 new UsernamePasswordAuthenticationToken(email, token,
                         Collections.singletonList(new SimpleGrantedAuthority("SIMPLE_USER")));

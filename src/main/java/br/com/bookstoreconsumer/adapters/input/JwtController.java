@@ -1,6 +1,6 @@
 package br.com.bookstoreconsumer.adapters.input;
 
-import br.com.bookstoreconsumer.adapters.configuration.JwtSecurityPort;
+import br.com.bookstoreconsumer.adapters.configuration.JwtUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
@@ -16,10 +16,10 @@ import java.util.Map;
 @RequestMapping("/auth")
 public class JwtController {
 
-    private final JwtSecurityPort securityPort;
+    private final JwtUtil jwtUtil;
 
-    public JwtController(JwtSecurityPort securityPort) {
-        this.securityPort = securityPort;
+    public JwtController(JwtUtil jwtUtil) {
+        this.jwtUtil = jwtUtil;
     }
 
     @GetMapping("/generate-token")
@@ -33,7 +33,7 @@ public class JwtController {
         OAuth2User principal = token.getPrincipal();
 
         String jwtToken =
-                securityPort.generateJwt(principal);
+                jwtUtil.generateJwt(principal);
 
         return ResponseEntity.ok()
                 .header("Authorization", "Bearer " + jwtToken)

@@ -10,23 +10,24 @@ import java.util.Date;
 import java.util.Objects;
 
 @Component
-public class JwtSecurityAdapter implements JwtSecurityPort {
+public class JwtUtil {
 
+    public static final String EMAIL = "email";
+    public static final String NAME = "name";
+    public static final String SUB = "sub";
     @Value("${jwt.secret}")
     private String secretKey;
 
-    @Override
     public String generateJwt(OAuth2User oAuth2User) {
         return JWT.create()
-                .withSubject(oAuth2User.getAttribute("sub"))
-                .withClaim("email", Objects.requireNonNull(oAuth2User.getAttribute("email")).toString())
-                .withClaim("name", Objects.requireNonNull(oAuth2User.getAttribute("name")).toString())
+                .withSubject(oAuth2User.getAttribute(SUB))
+                .withClaim(EMAIL, Objects.requireNonNull(oAuth2User.getAttribute(EMAIL)).toString())
+                .withClaim(NAME, Objects.requireNonNull(oAuth2User.getAttribute(NAME)).toString())
                 .withIssuedAt(new Date())
                 .withExpiresAt(new Date(System.currentTimeMillis() + 3600 * 1000))
                 .sign(Algorithm.HMAC256(secretKey));
     }
 
-    @Override
     public boolean validJwt(String token) {
         try {
             JWT.require(Algorithm.HMAC256(secretKey))
@@ -36,6 +37,10 @@ public class JwtSecurityAdapter implements JwtSecurityPort {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    public String getEmail(String token) {
+        return JWT.decode(token).getClaim(EMAIL).asString();
     }
 
 }

@@ -47,14 +47,4 @@ public class FeignError {
     public void setHttpStatus(int httpStatus) {
         this.httpStatus = httpStatus;
     }
-
-    public FeignError(String date, String path, String method, String error) {
-        this.date = date;
-        this.path = path;
-        this.method = method;
-        this.error = error;
-    }
-
-    public FeignError() {
-    }
 }

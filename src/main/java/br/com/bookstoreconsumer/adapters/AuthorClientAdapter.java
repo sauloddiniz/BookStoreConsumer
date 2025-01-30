@@ -4,7 +4,6 @@ import br.com.bookstoreconsumer.adapters.clients.AuthorsClientApi;
 import br.com.bookstoreconsumer.adapters.clients.dto.AuthorAndBookResponse;
 import br.com.bookstoreconsumer.adapters.input.dto.AuthorRequest;
 import br.com.bookstoreconsumer.adapters.output.AuthorClientPort;
-import br.com.bookstoreconsumer.core.domain.Author;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
@@ -21,29 +20,24 @@ public class AuthorClientAdapter implements AuthorClientPort {
     }
 
     @Override
-    public List<Author> getAuthors(boolean books) {
-        List<AuthorAndBookResponse> authorsRequest = authorsClientApi.getAuthors(books);
-        return authorsRequest.stream().map(AuthorAndBookResponse::toAuthor).toList();
+    public List<AuthorAndBookResponse> getAuthors(boolean books) {
+        return authorsClientApi.getAuthors(books);
     }
 
     @Override
-    public Author getAuthorById(Long id) {
-        AuthorAndBookResponse authorResponse = authorsClientApi.getAuthorById(id);
-        return AuthorAndBookResponse.toAuthor(authorResponse);
+    public AuthorAndBookResponse getAuthorById(Long id) {
+        return authorsClientApi.getAuthorById(id);
     }
 
     @Override
-    public String saveAuthor(Author author) {
-        AuthorRequest authorRequest = AuthorRequest.toRequest(author);
+    public String saveAuthor(AuthorRequest authorRequest) {
         ResponseEntity<Void> response = authorsClientApi.saveAuthor(authorRequest);
         return Objects.requireNonNull(response.getHeaders().getLocation()).toString();
     }
 
     @Override
-    public Author updateAuthor(Long id, Author author) {
-        AuthorRequest authorRequest = AuthorRequest.toRequest(author);
-        AuthorAndBookResponse authorResponse = authorsClientApi.updateAuthor(id, authorRequest);
-        return AuthorAndBookResponse.toAuthor(authorResponse);
+    public AuthorAndBookResponse updateAuthor(Long id, AuthorRequest authorRequest) {
+        return authorsClientApi.updateAuthor(id, authorRequest);
     }
 
     @Override
