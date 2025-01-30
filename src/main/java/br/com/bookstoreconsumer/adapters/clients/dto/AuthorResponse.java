@@ -13,13 +13,13 @@ public record AuthorResponse(Long id,
                              @JsonAlias("name")
                              @JsonProperty("nome")
                              String name,
-                             @JsonAlias("bookResponse")
+                             @JsonAlias("books")
                              @JsonProperty("livros")
-                             List<BookResponse> bookResponse) {
+                             List<BookResponse> books) {
 
     public static Author toAuthor(AuthorResponse authorResponse) {
         return new Author(authorResponse.id(), authorResponse.name(),
-                Optional.ofNullable(authorResponse.bookResponse())
+                Optional.ofNullable(authorResponse.books())
                         .map(Collection::stream)
                         .orElseGet(Stream::empty)
                         .map(BookResponse::toBook)

@@ -19,8 +19,8 @@ public class AuthorsClientAdapter implements AuthorsClientPort {
     }
 
     @Override
-    public List<Author> getAuthors() {
-        List<AuthorResponse> authorRequests = authorsClientApi.getAuthors().getBody();
+    public List<Author> getAuthors(boolean books) {
+        List<AuthorResponse> authorRequests = authorsClientApi.getAuthors(books).getBody();
         return authorRequests.stream().map(AuthorResponse::toAuthor).toList();
     }
 

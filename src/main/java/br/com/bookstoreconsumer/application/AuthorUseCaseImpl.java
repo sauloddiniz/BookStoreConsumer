@@ -18,8 +18,8 @@ public class AuthorUseCaseImpl implements AuthorUseCase {
     }
 
     @Override
-    public List<AuthorResponse> getAuthors() {
-        List<Author> authors = authorsClientPort.getAuthors();
+    public List<AuthorResponse> getAuthors(boolean books) {
+        List<Author> authors = authorsClientPort.getAuthors(books);
         return authors.stream().map(AuthorResponse::toResponse).toList();
     }
 

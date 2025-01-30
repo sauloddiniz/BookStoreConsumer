@@ -13,7 +13,7 @@ import java.util.List;
 public interface AuthorsClientApi {
 
     @GetMapping()
-    ResponseEntity<List<AuthorResponse>> getAuthors();
+    ResponseEntity<List<AuthorResponse>> getAuthors(@RequestParam(value = "books", required = false, defaultValue = "false") boolean books);
 
     @GetMapping("/{id}")
     ResponseEntity<AuthorResponse> getAuthorById(@PathVariable Long id);

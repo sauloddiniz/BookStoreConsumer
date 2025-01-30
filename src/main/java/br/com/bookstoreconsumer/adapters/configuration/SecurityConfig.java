@@ -25,7 +25,7 @@ public class SecurityConfig {
                                     "/swagger-ui/**",
                                     "/v3/api-docs/**",
                                     "/api-docs.yaml",
-                                    "/auth/generate-token"
+                                    "/bookstore-consumer-api/auth/generate-token"
                             ).permitAll();
                             authorize.anyRequest().authenticated();
                         }
@@ -35,7 +35,7 @@ public class SecurityConfig {
                         oAuth2Configurer ->
                                 oAuth2Configurer
                                         .successHandler((request, response, authentication) ->
-                                                response.sendRedirect("/auth/generate-token")
+                                                response.sendRedirect("/bookstore-consumer-api/auth/generate-token")
                                         )
                 );
         return http.build();

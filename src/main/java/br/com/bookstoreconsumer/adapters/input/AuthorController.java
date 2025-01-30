@@ -21,8 +21,8 @@ public class AuthorController {
     }
 
     @GetMapping
-    public ResponseEntity<List<AuthorResponse>> getAuthors() {
-        return ResponseEntity.ok(authorsUseCase.getAuthors());
+    public ResponseEntity<List<AuthorResponse>> getAuthors(@RequestParam(value = "books", required = false, defaultValue = "false") boolean books) {
+        return ResponseEntity.ok(authorsUseCase.getAuthors(books));
     }
 
     @GetMapping({"/{id}"})
