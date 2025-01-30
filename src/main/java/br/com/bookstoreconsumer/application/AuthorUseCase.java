@@ -1,14 +1,14 @@
 package br.com.bookstoreconsumer.application;
 
-import br.com.bookstoreconsumer.adapters.clients.dto.AuthorResponse;
+import br.com.bookstoreconsumer.adapters.clients.dto.AuthorAndBookResponse;
 import br.com.bookstoreconsumer.adapters.input.dto.AuthorRequest;
 
 import java.util.List;
 
 public interface AuthorUseCase {
-    List<AuthorResponse> getAuthors(boolean books);
-    AuthorResponse getAuthorById(Long id);
+    List<AuthorAndBookResponse> getAuthors(boolean books);
+    AuthorAndBookResponse getAuthorById(Long id);
     String saveAuthor(AuthorRequest author);
-    AuthorResponse updateAuthor(Long id, AuthorRequest author);
+    AuthorAndBookResponse updateAuthor(Long id, AuthorRequest author);
     void deleteAuthor(Long id);
 }

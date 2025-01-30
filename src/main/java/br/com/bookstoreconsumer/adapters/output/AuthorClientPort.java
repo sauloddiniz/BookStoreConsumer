@@ -4,7 +4,7 @@ import br.com.bookstoreconsumer.core.domain.Author;
 
 import java.util.List;
 
-public interface AuthorsClientPort {
+public interface AuthorClientPort {
     List<Author> getAuthors(boolean books);
     Author getAuthorById(Long id);
     String saveAuthor(Author author);

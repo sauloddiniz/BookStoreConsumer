@@ -1,8 +1,8 @@
 package br.com.bookstoreconsumer.application;
 
-import br.com.bookstoreconsumer.adapters.clients.dto.AuthorResponse;
+import br.com.bookstoreconsumer.adapters.clients.dto.AuthorAndBookResponse;
 import br.com.bookstoreconsumer.adapters.input.dto.AuthorRequest;
-import br.com.bookstoreconsumer.adapters.output.AuthorsClientPort;
+import br.com.bookstoreconsumer.adapters.output.AuthorClientPort;
 import br.com.bookstoreconsumer.core.domain.Author;
 import org.springframework.stereotype.Service;
 
@@ -11,35 +11,36 @@ import java.util.List;
 @Service
 public class AuthorUseCaseImpl implements AuthorUseCase {
 
-    private final AuthorsClientPort authorsClientPort;
+    private final AuthorClientPort authorsClientPort;
 
-    public AuthorUseCaseImpl(AuthorsClientPort authorsClientPort) {
+    public AuthorUseCaseImpl(AuthorClientPort authorsClientPort) {
         this.authorsClientPort = authorsClientPort;
     }
 
     @Override
-    public List<AuthorResponse> getAuthors(boolean books) {
+    public List<AuthorAndBookResponse> getAuthors(boolean books) {
         List<Author> authors = authorsClientPort.getAuthors(books);
-        return authors.stream().map(AuthorResponse::toResponse).toList();
+        return authors.stream().map(AuthorAndBookResponse::toResponse).toList();
     }
 
     @Override
-    public AuthorResponse getAuthorById(Long id) {
+    public AuthorAndBookResponse getAuthorById(Long id) {
         Author author = authorsClientPort.getAuthorById(id);
-        return AuthorResponse.toResponse(author);
+        return AuthorAndBookResponse.toResponse(author);
     }
 
     @Override
     public String saveAuthor(AuthorRequest authorRequest) {
         Author author = new Author(authorRequest.name());
-        return authorsClientPort.saveAuthor(author);
+        String location = authorsClientPort.saveAuthor(author);
+        return location.substring(location.lastIndexOf("/") + 1);
     }
 
     @Override
-    public AuthorResponse updateAuthor(Long id, AuthorRequest author) {
+    public AuthorAndBookResponse updateAuthor(Long id, AuthorRequest author) {
         Author authorToUpdate = new Author(id, author.name());
         authorToUpdate = authorsClientPort.updateAuthor(id, authorToUpdate);
-        return AuthorResponse.toResponse(authorToUpdate);
+        return AuthorAndBookResponse.toResponse(authorToUpdate);
     }
 
     @Override

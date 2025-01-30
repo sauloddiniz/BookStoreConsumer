@@ -15,12 +15,14 @@ import java.util.Map;
 public class ExceptionHandlerMainConfig {
 
     @ExceptionHandler(ClientApiFeignException.class)
-    public ResponseEntity<Object> clientApiFeignException(ClientApiFeignException ex) {
-        Map<String, Object> body = new HashMap<>();
-        body.put("date", ClientApiFeignException.getFeignError().getDate());
-        body.put("error", ClientApiFeignException.getFeignError().getError());
-        body.put("path", ClientApiFeignException.getFeignError().getPath());
-        body.put("method", ClientApiFeignException.getFeignError().getMethod());
+    public ResponseEntity<Object> clientApiFeignException(ClientApiFeignException ex, HttpServletRequest request) {
+        Map<String, Object> body = extractErrorInfo(ex, request);
+        Map<String, Object> externalError = new HashMap<>();
+        externalError.put("date", ClientApiFeignException.getFeignError().getDate());
+        externalError.put("error", ClientApiFeignException.getFeignError().getError());
+        externalError.put("path", ClientApiFeignException.getFeignError().getPath());
+        externalError.put("method", ClientApiFeignException.getFeignError().getMethod());
+        body.put("externalError", externalError);
         return new ResponseEntity<>(body, HttpStatus.valueOf(ClientApiFeignException.getFeignError().getHttpStatus()));
     }
 
