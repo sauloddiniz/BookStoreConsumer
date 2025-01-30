@@ -5,7 +5,6 @@ import br.com.bookstoreconsumer.adapters.clients.dto.BookRequest;
 import br.com.bookstoreconsumer.adapters.clients.dto.BookResponse;
 
 public interface BookUseCase {
-
     AuthorAndBookResponse getListBooks(Long authorId);
     AuthorAndBookResponse getBookById(Long authorId, Long id);
     String saveBook(Long authorId, BookRequest bookRequest);

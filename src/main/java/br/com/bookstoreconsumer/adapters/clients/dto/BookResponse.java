@@ -1,9 +1,7 @@
 package br.com.bookstoreconsumer.adapters.clients.dto;
 
-
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 
 public record BookResponse(
         Long id,
