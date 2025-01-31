@@ -10,9 +10,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 public class SecurityConfig {
 
-    private final JwtValidationFilter jwtValidationFilter;
+    private final CustomJwtFilter jwtValidationFilter;
 
-    public SecurityConfig(JwtValidationFilter jwtValidationFilter) {
+    public SecurityConfig(CustomJwtFilter jwtValidationFilter) {
         this.jwtValidationFilter = jwtValidationFilter;
     }
 

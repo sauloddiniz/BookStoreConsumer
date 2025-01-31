@@ -3,6 +3,7 @@ package br.com.bookstoreconsumer.adapters.input;
 import br.com.bookstoreconsumer.adapters.configuration.JwtUtil;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
+import com.github.tomakehurst.wiremock.http.Fault;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -311,6 +312,30 @@ class AuthorControllerTest {
                         .header("Authorization", "Bearer my_token_is_valid")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("Should Return 401 Unauthorized When Authorization Header Is Missing")
+    void shouldReturnUnauthorizedWhenAuthorizationHeaderIsMissing() throws Exception {
+        Long authorId = 99L;
+
+        mockMvc.perform(delete("/authors/{id}", authorId))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @DisplayName("Should Retry When Connection is Refused")
+    void shouldRetry_WhenConnectionIsRefused() throws Exception {
+
+        mockUserService.stubFor(WireMock.delete(urlEqualTo("/bookstore-api/authors/99"))
+                .willReturn(aResponse()
+                        .withFault(Fault.RANDOM_DATA_THEN_CLOSE)));
+
+        mockMvc.perform(delete("/authors/99")
+                        .header("Authorization", "Bearer valid_token")
+                        .contentType(MediaType.APPLICATION_JSON));
+
+        WireMock.verify(3, deleteRequestedFor(urlEqualTo("/bookstore-api/authors/99")));
     }
 
     private static String getSampleAuthorsJson() {

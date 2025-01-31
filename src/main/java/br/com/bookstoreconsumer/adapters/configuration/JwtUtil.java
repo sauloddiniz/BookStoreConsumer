@@ -2,6 +2,7 @@ package br.com.bookstoreconsumer.adapters.configuration;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Component;
@@ -30,6 +31,7 @@ public class JwtUtil {
 
     public boolean validJwt(String token) {
         try {
+            token = token.substring(7);
             JWT.require(Algorithm.HMAC256(secretKey))
                     .build()
                     .verify(token);
@@ -40,7 +42,13 @@ public class JwtUtil {
     }
 
     public String getEmail(String token) {
-        return JWT.decode(token).getClaim(EMAIL).asString();
+        DecodedJWT decodedJWT = decode(token);
+        return decodedJWT.getClaim(EMAIL).asString();
+    }
+
+    private DecodedJWT decode(String token) {
+        token = token.substring(7);
+        return JWT.decode(token);
     }
 
 }
