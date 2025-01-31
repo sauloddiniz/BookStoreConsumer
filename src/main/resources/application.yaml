@@ -30,6 +30,8 @@ springdoc:
   swagger-ui:
     url: "/api-docs.yaml"
 
+jwt:
+  secret: "chave-de-seguranca"
 
 logging:
   level:
@@ -37,9 +39,6 @@ logging:
     org.springframework.security: DEBUG
     org.springframework.security.oauth2: DEBUG
     root: info
-
-jwt:
-  secret: "chave-de-seguranca"
 
 
 
