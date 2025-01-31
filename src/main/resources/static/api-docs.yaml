@@ -1,26 +1,30 @@
 openapi: 3.0.0
 info:
-  title: API de Livros
-  description: API para gerenciar autores e livros
+  title: "API de Gestão de Autores e Livros"
+  description: "Esta API consome dados de uma API externa (API 1) para fornecer endpoints que permitem listar, buscar, criar, atualizar e excluir informações de autores e seus livros. Também combina dados de autores e livros para facilitar o acesso integrado, com autenticação via JWT."
   version: 1.0.0
+
+servers:
+  - url: http://localhost:8081/bookstore-consumer-api
+    description: API de Livros no ambiente local
 
 components:
   securitySchemes:
     bearerAuth:
       type: http
       scheme: bearer
-      bearerFormat: JWT # Indica que o header usará tokens no formato JWT
+      bearerFormat: JWT
   schemas:
     AuthorRequest:
       type: object
       properties:
-        name:
+        nome:
           type: string
           description: Nome do autor
       required:
-        - name
+        - nome
 
-    AuthorResponse:
+    AuthorAndBookResponse:
       type: object
       properties:
         id:
@@ -29,6 +33,33 @@ components:
         name:
           type: string
           description: Nome do autor
+        books:
+          type: array
+          items:
+            $ref: '#/components/schemas/BookResponse'
+
+    BookRequest:
+      type: object
+      properties:
+        titulo:
+          type: string
+          description: Título do livro
+        descricao:
+          type: string
+          description: Descrição ou sinopse do livro
+        categoria:
+          type: string
+          description: Categoria do livro
+          enum:
+            - ROMANCE
+            - FICCAO
+            - POESIA
+            - BIOGRAFIA
+            - DRAMA
+      required:
+        - titulo
+        - descricao
+        - categoria
 
     BookResponse:
       type: object
@@ -39,24 +70,62 @@ components:
         title:
           type: string
           description: Título do livro
-        author:
+        description:
           type: string
-          description: Nome do autor do livro
+          description: Descrição do livro
+        category:
+          type: string
+          description: Categoria do livro
+          enum:
+            - ROMANCE
+            - FICCAO
+            - POESIA
+            - BIOGRAFIA
+            - DRAMA
 
 security:
-  - bearerAuth: [] # Aplica o esquema de autenticação (JWT) globalmente a todos os endpoints
+  - bearerAuth: []
 
 paths:
   /authors:
+    get:
+      tags:
+        - Autores
+      summary: Lista todos os autores
+      description: Retorna todos os autores cadastrados. Pode incluir livros associados, dependendo do parâmetro de consulta.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: books
+          in: query
+          description: Inclui livros associados aos autores (valor booleano)
+          required: false
+          schema:
+            type: boolean
+            default: false
+      responses:
+        '200':
+          description: Lista de autores retornada com sucesso.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AuthorAndBookResponse'
+        '401':
+          description: Token JWT ausente ou inválido.
+        '500':
+          description: Erro interno no servidor.
+
     post:
       tags:
         - Autores
       summary: Cria um novo autor
-      description: Cria um autor no banco de dados
+      description: Adiciona um novo autor no banco de dados.
       security:
-        - bearerAuth: [] # Exige token JWT nesta rota
+        - bearerAuth: []
       requestBody:
-        description: Dados do autor a ser criado
+        description: Objeto contendo informações do autor.
         required: true
         content:
           application/json:
@@ -64,147 +133,266 @@ paths:
               $ref: '#/components/schemas/AuthorRequest'
       responses:
         '201':
-          description: Autor criado com sucesso
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AuthorResponse'
+          description: Autor criado com sucesso.
         '400':
-          description: Dados inválidos enviados
+          description: Dados inválidos enviados.
         '401':
-          description: Token JWT ausente ou inválido
+          description: Token JWT ausente ou inválido.
         '500':
-          description: Erro interno no servidor
-
-    get:
-      tags:
-        - Autores
-      summary: Lista todos os autores
-      description: Lista todos os autores cadastrados no banco de dados
-      security:
-        - bearerAuth: [] # Exige token JWT nesta rota
-      responses:
-        '200':
-          description: Lista de autores retornada com sucesso
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/AuthorResponse'
-        '401':
-          description: Token JWT ausente ou inválido
-        '500':
-          description: Erro interno no servidor
+          description: Erro interno no servidor.
 
   /authors/{id}:
     get:
       tags:
         - Autores
       summary: Busca um autor pelo ID
-      description: Retorna os dados de um autor com base no ID informado
-      security:
-        - bearerAuth: [] # Exige token JWT nesta rota
-      parameters:
-        - name: id
-          in: path
-          required: true
-          description: ID do autor a ser buscado
-          schema:
-            type: integer
-      responses:
-        '200':
-          description: Autor encontrado com sucesso
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AuthorResponse'
-        '400':
-          description: ID inválido enviado
-        '401':
-          description: Token JWT ausente ou inválido
-        '404':
-          description: Autor não encontrado
-        '500':
-          description: Erro interno no servidor
-
-    put:
-      tags:
-        - Autores
-      summary: Atualiza os dados de um autor pelo ID
-      description: Permite atualizar todos os dados de um autor existente
+      description: Obtém as informações de um autor pelo ID.
       security:
         - bearerAuth: []
       parameters:
         - name: id
           in: path
           required: true
-          description: ID do autor a ser atualizado
+          description: ID do autor.
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Autor retornado com sucesso.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthorAndBookResponse'
+        '401':
+          description: Token JWT ausente ou inválido.
+        '404':
+          description: Autor não encontrado.
+        '500':
+          description: Erro interno no servidor.
+
+    put:
+      tags:
+        - Autores
+      summary: Atualiza os dados de um autor
+      description: Modifica as informações de um autor existente.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID do autor que será atualizado.
           schema:
             type: integer
       requestBody:
-        description: Dados do autor a ser atualizado
+        description: Objeto contendo as informações atualizadas do autor.
         required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/AuthorRequest'
       responses:
-        '204':
-          description: Autor atualizado com sucesso
+        '200':
+          description: Autor atualizado com sucesso.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthorAndBookResponse'
         '400':
-          description: Dados inválidos enviados
+          description: Dados inválidos enviados.
         '401':
-          description: Token JWT ausente ou inválido
+          description: Token JWT ausente ou inválido.
         '404':
-          description: Autor não encontrado
+          description: Autor não encontrado.
         '500':
-          description: Erro interno no servidor
+          description: Erro interno no servidor.
 
     delete:
       tags:
         - Autores
-      summary: Remove um autor pelo ID
-      description: Permite deletar um autor pelo ID no banco de dados
+      summary: Remove um autor
+      description: Exclui um autor com base no ID informado.
       security:
         - bearerAuth: []
       parameters:
         - name: id
           in: path
           required: true
-          description: ID do autor a ser deletado
+          description: ID do autor a ser removido.
           schema:
             type: integer
       responses:
         '204':
-          description: Autor removido com sucesso
-        '400':
-          description: ID inválido enviado
+          description: Autor removido com sucesso.
         '401':
-          description: Token JWT ausente ou inválido
+          description: Token JWT ausente ou inválido.
         '404':
-          description: Autor não encontrado
+          description: Autor não encontrado.
         '500':
-          description: Erro interno no servidor
+          description: Erro interno no servidor.
 
-  /books:
+  /authors/{authorId}/books:
     get:
       tags:
         - Livros
-      summary: Lista todos os livros
-      description: Lista todos os livros cadastrados no banco de dados
+      summary: Lista todos os livros de um autor
+      description: Retorna todos os livros associados a um autor específico, com base no ID do autor.
       security:
-        - bearerAuth: [] # Exige token JWT nesta rota
+        - bearerAuth: []
+      parameters:
+        - name: authorId
+          in: path
+          required: true
+          description: ID do autor para obter os livros.
+          schema:
+            type: integer
       responses:
         '200':
-          description: Lista de livros retornada com sucesso
+          description: Livros retornados com sucesso.
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/BookResponse'
+                $ref: '#/components/schemas/AuthorAndBookResponse'
         '401':
-          description: Token JWT ausente ou inválido
+          description: Token JWT ausente ou inválido.
+        '404':
+          description: Autor não encontrado.
         '500':
-          description: Erro interno no servidor
+          description: Erro interno no servidor.
+
+    post:
+      tags:
+        - Livros
+      summary: Cria um livro
+      description: Associa um novo livro a um autor existente.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: authorId
+          in: path
+          required: true
+          description: ID do autor ao qual o livro será associado.
+          schema:
+            type: integer
+      requestBody:
+        description: Objeto contendo informações do livro.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BookRequest'
+      responses:
+        '201':
+          description: Livro criado com sucesso.
+        '401':
+          description: Token JWT ausente ou inválido.
+        '404':
+          description: Autor não encontrado.
+        '500':
+          description: Erro interno no servidor.
+
+  /authors/{authorId}/books/{id}:
+    get:
+      tags:
+        - Livros
+      summary: Busca um livro
+      description: Retorna os detalhes de um livro específico associado a um autor.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: authorId
+          in: path
+          required: true
+          description: ID do autor.
+          schema:
+            type: integer
+        - name: id
+          in: path
+          required: true
+          description: ID do livro.
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Livro retornado com sucesso.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookResponse'
+        '401':
+          description: Token JWT ausente ou inválido.
+        '404':
+          description: Livro não encontrado.
+        '500':
+          description: Erro interno no servidor.
+
+    put:
+      tags:
+        - Livros
+      summary: Atualiza um livro
+      description: Atualiza as informações de um livro associado a um autor.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: authorId
+          in: path
+          required: true
+          description: ID do autor dono do livro.
+          schema:
+            type: integer
+        - name: id
+          in: path
+          required: true
+          description: ID do livro a ser atualizado.
+          schema:
+            type: integer
+      requestBody:
+        description: Objeto com os dados atualizados do livro.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BookRequest'
+      responses:
+        '200':
+          description: Livro atualizado com sucesso.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookResponse'
+        '401':
+          description: Token JWT ausente ou inválido.
+        '404':
+          description: Livro ou autor não encontrado.
+        '500':
+          description: Erro interno no servidor.
+
+    delete:
+      tags:
+        - Livros
+      summary: Remove um livro
+      description: Exclui um livro específico associado a um autor.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: authorId
+          in: path
+          required: true
+          description: ID do autor.
+          schema:
+            type: integer
+        - name: id
+          in: path
+          required: true
+          description: ID do livro.
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Livro removido com sucesso.
+        '401':
+          description: Token JWT ausente ou inválido.
+        '404':
+          description: Livro ou autor não encontrado.
+        '500':
+          description: Erro interno no servidor.

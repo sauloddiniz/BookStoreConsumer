@@ -22,10 +22,10 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize -> {
                             authorize.requestMatchers(
-                                    "/swagger-ui/**",
-                                    "/v3/api-docs/**",
-                                    "/api-docs.yaml",
-                                    "/auth/generate-token"
+                                    "/bookstore-consumer-api/swagger-ui/**",
+                                    "/bookstore-consumer-api/v3/api-docs/**",
+                                    "/bookstore-consumer-api/api-docs.yaml",
+                                    "/bookstore-consumer-api/auth/generate-token"
                             ).permitAll();
                             authorize.anyRequest().authenticated();
                         }

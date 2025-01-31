@@ -32,10 +32,9 @@ public class CustomJwtFilter extends OncePerRequestFilter {
 
         final String requestURI = request.getRequestURI();
 
-        if (requestURI.startsWith("/swagger-ui/")
-                || requestURI.startsWith("/v3/api-docs")
-                || requestURI.equals("/api-docs.yaml")
-                || requestURI.equals("/auth/generate-token")
+        if (requestURI.startsWith("/bookstore-consumer-api/swagger-ui/")
+                || requestURI.startsWith("/bookstore-consumer-api/v3/api-docs")
+                || requestURI.equals("/bookstore-consumer-api/api-docs.yaml")
                 || requestURI.equals("/bookstore-consumer-api/login")
                 || requestURI.equals("/bookstore-consumer-api/auth/generate-token")
         ) {
