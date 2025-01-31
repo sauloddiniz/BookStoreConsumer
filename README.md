@@ -38,7 +38,7 @@ Antes de começar, certifique-se de que o ambiente possui todas as ferramentas a
 ### Obtendo o Token de Autenticação
 
 1. Com a aplicação em execução, acesse a seguinte URL para iniciar o processo de autenticação:
-    - [Login - Ambiente Local](http://localhost:8080/bookstore-consumer-api/login)
+    - [Login - Ambiente Local](http://localhost:8081/bookstore-consumer-api/login)
 
 2. Na página de login, selecione o serviço que deseja autenticar. Exemplo: escolha **BookStore** ou outro serviço disponível.
 
@@ -62,7 +62,7 @@ Antes de começar, certifique-se de que o ambiente possui todas as ferramentas a
 Ao iniciar a aplicação, você poderá acessar a documentação dos endpoints através do **Swagger UI**:
 
 - **Ambiente local**:
-    - [Swagger UI - Local](http://localhost:8080/bookstore-consumer-api/swagger-ui/index.html)
+    - [Swagger UI - Local](http://localhost:8081/bookstore-consumer-api/swagger-ui/index.html)
 
 A documentação traz detalhes de cada endpoint, incluindo os parâmetros esperados e a estrutura de autenticação.
 
