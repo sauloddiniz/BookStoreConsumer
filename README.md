@@ -4,7 +4,7 @@ Essa API tem como objetivo consumir as funcionalidades do sistema **BookStore**,
 
 Além disso, a aplicação expõe endpoints para operações específicas relacionadas ao consumo dos dados e serviços disponibilizados pela aplicação **BookStore**.
 
-Por padrão, a autenticação OAUTH e a geração de JWTs são ativadas. No entanto, essas funcionalidades podem ser desabilitadas alterando as variáveis de ambiente no arquivo \`docker-compose.yml\`.
+Por padrão, a autenticação OAuth e a geração de JWTs estão ativadas. No entanto, essas funcionalidades podem ser desativadas configurando as variáveis de ambiente no arquivo `docker-compose.yml`. Para mais detalhes, consulte a documentação do **BookStore-API** no seguinte [link](https://github.com/sauloddiniz/bookstore).
 
 ---
 
