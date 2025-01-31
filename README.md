@@ -20,6 +20,20 @@ Antes de começar, certifique-se de que o ambiente possui todas as ferramentas a
 
 ---
 
+### Executando via Docker Compose
+
+1. Compile a aplicação para gerar o arquivo JAR. Execute o seguinte comando no diretório raiz do projeto:
+   ```bash
+   mvn clean package
+   ```
+
+2. Após a criação do JAR, inicie os containers utilizando o Docker Compose:
+   ```bash
+   docker-compose up --build
+   ```
+---
+
+
 ### Executando manualmente (dependência do Docker local)
 
 1. Certifique-se de que o **PostgreSQL** e a API **BookStore** estejam configurado localmente ou inicie com o Docker:
