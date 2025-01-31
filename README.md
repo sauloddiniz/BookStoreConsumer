@@ -29,7 +29,7 @@ Antes de começar, certifique-se de que o ambiente possui todas as ferramentas a
 
 2. Após a criação do JAR, inicie os containers utilizando o Docker Compose:
    ```bash
-   docker-compose up --build
+   docker-compose up
    ```
 ---
 
