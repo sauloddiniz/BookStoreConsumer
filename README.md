@@ -54,7 +54,7 @@ Antes de começar, certifique-se de que o ambiente possui todas as ferramentas a
 1. Com a aplicação em execução, acesse a seguinte URL para iniciar o processo de autenticação:
     - [Login - Ambiente Local](http://localhost:8081/bookstore-consumer-api/login)
 
-2. Na página de login, selecione o serviço que deseja autenticar. Exemplo: escolha **BookStore** ou outro serviço disponível.
+2. Na página de login, selecione o serviço que deseja autenticar. Exemplo: escolha **Google** ou outro serviço disponível.
 
 3. Após a autenticação bem-sucedida, você será redirecionado para uma página onde o token JWT será exibido.
 
