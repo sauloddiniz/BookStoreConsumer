@@ -83,8 +83,7 @@ A documentação traz detalhes de cada endpoint, incluindo os parâmetros espera
 
 ### Observações
 
-- Certifique-se de que o `JAVA_HOME` esteja configurado corretamente no sistema.
-- Tokens fornecidos pela aplicação BookStore devem ser usados nas requisições para validar permissões.
+- Certifique-se de que o `JAVA_HOME` esteja configurado corretamente no sistema
 - Consulte a <a href="https://oauth.net/2/" target="_blank">documentação oficial do OAuth 2.0</a> para entender mais sobre as operações de autenticação.
 
 ---
