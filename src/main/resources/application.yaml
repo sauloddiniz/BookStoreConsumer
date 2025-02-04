@@ -19,12 +19,12 @@ spring:
               - openid
               - profile
               - email
-            client-id: "61911610387-02vbrps8tfp031j4850ihde8c9rqgdgh.apps.googleusercontent.com"
-            client-secret: "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"
-            redirect-uri: "http://localhost:8081/bookstore-consumer-api/login/oauth2/code/google"
+            client-id: ""
+            client-secret: ""
+            redirect-uri: ""
           github:
-            client-id: "Ov23libHD1JBDsxubt8f"
-            client-secret: "55f0bd954d0e548f32d31ee105493076a5b8eff5"
+            client-id: ""
+            client-secret: ""
 
 springdoc:
   api-docs:
